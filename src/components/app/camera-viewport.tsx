@@ -16,6 +16,7 @@ export interface CameraHandle {
 
 interface CameraViewportProps {
   className?: string;
+  disabled?: boolean;
 }
 
 function aspectKeyToSize(key: AspectRatioKey) {
@@ -44,7 +45,7 @@ function aspectKeyToRatio(key: AspectRatioKey) {
 export const CameraViewport = React.forwardRef<
   CameraHandle,
   CameraViewportProps
->(function CameraViewport({ className }, ref) {
+>(function CameraViewport({ className, disabled }, ref) {
   const videoRef = React.useRef<HTMLVideoElement | null>(null);
   const streamRef = React.useRef<MediaStream | null>(null);
   const isStartingRef = React.useRef(false);
@@ -184,11 +185,13 @@ export const CameraViewport = React.forwardRef<
   }, [aspect.height, aspect.width, targetRatio]);
 
   React.useEffect(() => {
-    void startWithFacing();
+    if (!disabled) {
+      void startWithFacing();
+    }
     return () => {
       stop();
     };
-  }, [startWithFacing, stop]);
+  }, [startWithFacing, stop, disabled]);
 
   React.useImperativeHandle(ref, () => ({ start, stop, capturePhoto }), [
     start,
@@ -197,25 +200,49 @@ export const CameraViewport = React.forwardRef<
   ]);
 
   const flipped = useSettingsStore((s) => s.flipped);
+  const showGuidelines = useSettingsStore((s) => s.showGuidelines);
   const hydrated = useSettingsHydrated();
 
   return (
     <div className="space-y-2">
       <div
         className={cn(
-          "rounded-3xl border border-border bg-muted/30 shadow-lg overflow-hidden w-full max-w-[480px] max-h-full",
+          "rounded-3xl border border-border bg-muted/30 shadow-lg overflow-hidden w-full max-w-[480px] max-h-full relative",
           className
         )}
         style={{
           aspectRatio: `${aspect.width} / ${aspect.height}`,
         }}
       >
+        {showGuidelines && (
+          <div className="absolute inset-0 z-10 pointer-events-none">
+            {/* 3x3 grid: 2 vertical + 2 horizontal lines */}
+            {/* Vertical lines */}
+            <div
+              className="absolute top-0 bottom-0 left-1/3 w-px bg-white/60"
+              style={{ zIndex: 1 }}
+            />
+            <div
+              className="absolute top-0 bottom-0 left-2/3 w-px bg-white/60"
+              style={{ zIndex: 1 }}
+            />
+            {/* Horizontal lines */}
+            <div
+              className="absolute left-0 right-0 top-1/3 h-px bg-white/60"
+              style={{ zIndex: 1 }}
+            />
+            <div
+              className="absolute left-0 right-0 top-2/3 h-px bg-white/60"
+              style={{ zIndex: 1 }}
+            />
+          </div>
+        )}
         <video
           ref={videoRef}
           className={cn(
             "w-full h-full object-cover",
             hydrated && flipped && "-scale-x-100",
-            !isActive && "opacity-0"
+            (!isActive || disabled) && "opacity-0"
           )}
           playsInline
           muted
@@ -227,7 +254,7 @@ export const CameraViewport = React.forwardRef<
           {isActive ? facing : "inactive"}
         </div> */}
         <div className="flex justify-end gap-2">
-          {isActive ? (
+          {isActive && !disabled ? (
             <Button
               variant="destructive"
               size="icon"
@@ -243,7 +270,8 @@ export const CameraViewport = React.forwardRef<
               size="icon"
               className="rounded-full size-8"
               aria-label="turn on camera"
-              onClick={() => startWithFacing()}
+              onClick={() => (disabled ? undefined : startWithFacing())}
+              disabled={disabled}
             >
               <Camera className="size-4" />
             </Button>
@@ -261,6 +289,7 @@ export const CameraViewport = React.forwardRef<
                 await startWithFacing(next);
               }
             }}
+            disabled={disabled}
           >
             <RefreshCcw className="size-4" />
           </Button>

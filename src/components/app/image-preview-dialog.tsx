@@ -10,25 +10,48 @@ import {
 import { Button } from "@/components/ui/button";
 import { IoSparklesSharp } from "react-icons/io5";
 import { useSettingsStore, type ConstraintKey } from "@/stores/settings";
+import { trpcClient } from "@/integrations/tanstack-query/root-provider";
+import { useNavigate } from "@tanstack/react-router";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 interface ImagePreviewDialogProps {
   open: boolean;
   imageUrl: string | null;
   onOpenChange: (open: boolean) => void;
-  onNext: () => void;
 }
 
 export function ImagePreviewDialog({
   open,
   imageUrl,
   onOpenChange,
-  onNext,
 }: ImagePreviewDialogProps) {
   const [step, setStep] = React.useState<1 | 2>(1);
 
   // Settings store
   const mode = useSettingsStore((s) => s.mode);
   const constraints = useSettingsStore((s) => s.constraints);
+  const navigate = useNavigate();
+
+  const analyzeMutation = useMutation({
+    mutationFn: (input: {
+      image: string;
+      mode: string;
+      constraints: ConstraintKey[];
+    }) =>
+      trpcClient.analyze.create
+        .mutate(input)
+        .then((r) => r.analysisId as string),
+    onSuccess: (analysisId) => {
+      onOpenChange(false);
+      void navigate({ to: `/analysis/${analysisId}` });
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error("Failed to analyze image");
+    },
+  });
+  const isSubmitting = analyzeMutation.isPending;
 
   React.useEffect(() => {
     if (open) {
@@ -40,6 +63,11 @@ export function ImagePreviewDialog({
     background: "Background",
     props: "Props",
     lighting: "Lighting",
+  };
+
+  const handleAnalyze = () => {
+    if (!imageUrl || isSubmitting) return;
+    analyzeMutation.mutate({ image: imageUrl, mode, constraints });
   };
 
   return (
@@ -120,11 +148,18 @@ export function ImagePreviewDialog({
             </>
           ) : (
             <>
-              <Button variant="outline" onClick={() => setStep(1)}>
+              <Button
+                variant="outline"
+                onClick={() => setStep(1)}
+                disabled={isSubmitting}
+              >
                 Back
               </Button>
-              <Button onClick={onNext}>
-                Analyze <IoSparklesSharp />
+              <Button
+                onClick={handleAnalyze}
+                disabled={!imageUrl || isSubmitting}
+              >
+                {isSubmitting ? "Analyzing..." : "Analyze"} <IoSparklesSharp />
               </Button>
             </>
           )}

@@ -8,6 +8,7 @@ import {
 import { ControlsBar } from "@/components/app/controls-bar";
 import { ImagePreviewDialog } from "@/components/app/image-preview-dialog";
 import { UserButton } from "@clerk/clerk-react";
+import { SignedIn, SignedOut, SignInButton } from "@clerk/clerk-react";
 // Note: keep original aspect in preview; crop/flip only on capture
 
 export const Route = createFileRoute("/")({
@@ -21,7 +22,7 @@ function App() {
   const [previewOpen, setPreviewOpen] = useState(false);
 
   return (
-    <div className="h-[calc(100dvh-1rem)] flex flex-col">
+    <div className="h-[calc(100dvh-2rem)] flex flex-col">
       <header className="flex items-center gap-4 justify-between px-4 pt-4 pb-2">
         <div className="flex items-center gap-2">
           <img src="/logo.png" alt="Logo" className="size-12" />
@@ -35,7 +36,21 @@ function App() {
 
       <main className="flex-1 px-4 flex">
         <div className="m-auto w-full max-w-[480px] flex flex-col items-center">
-          <CameraViewport ref={cameraRef} className="w-full" />
+          <SignedIn>
+            <CameraViewport ref={cameraRef} className="w-full" />
+          </SignedIn>
+          <SignedOut>
+            <div className="w-full p-6 border rounded-xl text-center space-y-4">
+              <p className="text-sm text-muted-foreground">
+                Please sign in to use the camera and upload photos.
+              </p>
+              <SignInButton mode="modal">
+                <button className="inline-flex items-center justify-center px-4 py-2 text-sm rounded-md bg-primary text-primary-foreground">
+                  Sign in to continue
+                </button>
+              </SignInButton>
+            </div>
+          </SignedOut>
         </div>
       </main>
 
@@ -57,30 +72,38 @@ function App() {
       />
 
       <footer className="h-24 flex items-center">
-        <ControlsBar
-          className="py-4"
-          onGalleryClick={() => fileInputRef.current?.click()}
-          onShutterClick={async () => {
-            const blob = await cameraRef.current?.capturePhoto();
-            if (blob) {
-              if (lastCaptureUrl) URL.revokeObjectURL(lastCaptureUrl);
-              const url = URL.createObjectURL(blob);
-              setLastCaptureUrl(url);
-              setPreviewOpen(true);
-            }
-          }}
-        />
+        <SignedIn>
+          <ControlsBar
+            className="py-4"
+            onGalleryClick={() => fileInputRef.current?.click()}
+            onShutterClick={async () => {
+              const blob = await cameraRef.current?.capturePhoto();
+              if (blob) {
+                if (lastCaptureUrl) URL.revokeObjectURL(lastCaptureUrl);
+                const url = URL.createObjectURL(blob);
+                setLastCaptureUrl(url);
+                setPreviewOpen(true);
+              }
+            }}
+          />
+        </SignedIn>
+        <SignedOut>
+          <ControlsBar
+            className="py-4"
+            disabled
+            onGalleryClick={() => {}}
+            onShutterClick={() => {}}
+          />
+        </SignedOut>
       </footer>
 
-      <ImagePreviewDialog
-        open={previewOpen}
-        onOpenChange={setPreviewOpen}
-        imageUrl={lastCaptureUrl}
-        onNext={() => {
-          // TODO: route to analysis page with the chosen image
-          setPreviewOpen(false);
-        }}
-      />
+      <SignedIn>
+        <ImagePreviewDialog
+          open={previewOpen}
+          onOpenChange={setPreviewOpen}
+          imageUrl={lastCaptureUrl}
+        />
+      </SignedIn>
     </div>
   );
 }
