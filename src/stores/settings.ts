@@ -2,41 +2,60 @@ import * as React from "react";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-export type PhotoshootMode = "social" | "pro" | "practice";
+export type PhotoshootMode =
+  | "Portraits"
+  | "Landscapes"
+  | "Street"
+  | "Product"
+  | "Events"
+  | "Food"
+  | "Other";
 export type AspectRatioKey = "9:16" | "3:4" | "1:1" | "4:3" | "4:5" | "16:9";
+export type ConstraintKey = "background" | "props" | "lighting";
 
 interface SettingsState {
+  // Camera settings
   flipped: boolean;
-  lighting: number; // -100..100 exposure intent
-  propsEnabled: boolean;
-  outfitsEnabled: boolean;
-  mode: PhotoshootMode;
   aspectRatio: AspectRatioKey;
+  showGuidelines: boolean;
+
+  // Constraints (none by default) - add items to restrict environment edits
+  constraints: ConstraintKey[];
+
+  // Shooting mode
+  mode: PhotoshootMode;
 
   setFlipped: (v: boolean) => void;
-  setLighting: (v: number) => void;
-  setPropsEnabled: (v: boolean) => void;
-  setOutfitsEnabled: (v: boolean) => void;
-  setMode: (m: PhotoshootMode) => void;
   setAspectRatio: (r: AspectRatioKey) => void;
+  setShowGuidelines: (v: boolean) => void;
+  addConstraint: (c: ConstraintKey) => void;
+  removeConstraint: (c: ConstraintKey) => void;
+  clearConstraints: () => void;
+  setMode: (m: PhotoshootMode) => void;
 }
 
 export const useSettingsStore = create<SettingsState>()(
   persist(
     (set) => ({
       flipped: true,
-      lighting: 0,
-      propsEnabled: false,
-      outfitsEnabled: false,
-      mode: "social",
       aspectRatio: "3:4",
+      showGuidelines: false,
+
+      constraints: [],
+
+      mode: "Other",
 
       setFlipped: (v) => set({ flipped: v }),
-      setLighting: (v) => set({ lighting: Math.max(-100, Math.min(100, v)) }),
-      setPropsEnabled: (v) => set({ propsEnabled: v }),
-      setOutfitsEnabled: (v) => set({ outfitsEnabled: v }),
-      setMode: (m) => set({ mode: m }),
       setAspectRatio: (r) => set({ aspectRatio: r }),
+      setShowGuidelines: (v) => set({ showGuidelines: v }),
+      addConstraint: (c) =>
+        set((s) =>
+          s.constraints.includes(c) ? s : { constraints: [...s.constraints, c] }
+        ),
+      removeConstraint: (c) =>
+        set((s) => ({ constraints: s.constraints.filter((k) => k !== c) })),
+      clearConstraints: () => set({ constraints: [] }),
+      setMode: (m) => set({ mode: m }),
     }),
     {
       name: "nano-photo-settings",
@@ -46,11 +65,10 @@ export const useSettingsStore = create<SettingsState>()(
       skipHydration: true,
       partialize: (state) => ({
         flipped: state.flipped,
-        lighting: state.lighting,
-        propsEnabled: state.propsEnabled,
-        outfitsEnabled: state.outfitsEnabled,
-        mode: state.mode,
         aspectRatio: state.aspectRatio,
+        showGuidelines: state.showGuidelines,
+        constraints: state.constraints,
+        mode: state.mode,
       }),
     }
   )

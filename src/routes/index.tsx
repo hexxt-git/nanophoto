@@ -21,7 +21,7 @@ function App() {
   const [previewOpen, setPreviewOpen] = useState(false);
 
   return (
-    <div className="h-dvh flex flex-col">
+    <div className="h-[calc(100dvh-1rem)] flex flex-col">
       <header className="flex items-center gap-4 justify-between px-4 pt-4 pb-2">
         <div className="flex items-center gap-2">
           <img src="/logo.png" alt="Logo" className="size-12" />
