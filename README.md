@@ -1,8 +1,21 @@
-Welcome to your new TanStack app! 
+# NanoPhoto
 
-# Getting Started
+An AI-powered photography coach that helps amateur photographers improve by analyzing photos for common problems and providing visual guidance. Get instant feedback with red sharpie annotations, suggested crops, and constrained AI edits while learning why each change matters.
 
-To run this application:
+## Features
+
+- 📸 **Visual Analysis**: AI detects composition issues, exposure problems, sharpness, white balance, and background clutter
+- 🔴 **Red Sharpie Guidance**: Interactive overlays with crop lines, arrows, and problem annotations drawn directly on your photos
+- 🎯 **Smart Suggestions**: Mode-based recommendations (Social/Pro/Practice) with adjustable aggression levels
+- ✨ **Constrained AI Edits**: One-click corrections for lighting, background cleanup, and object removal while preserving your artistic intent
+- 📚 **Learn & Improve**: Micro-lessons explain each suggestion with re-shoot prompts like "move subject left 1 step"
+- 📱 **Mobile-First Design**: Optimized for camera capture and on-the-go editing
+- 🌙 **Dark/Light Theme Support**: Easy on the eyes during photo editing sessions
+- 🔐 **Secure Authentication**: User management with Clerk
+
+## Getting Started
+
+To run NanoPhoto locally:
 
 ```bash
 pnpm install
@@ -11,7 +24,7 @@ pnpm start
 
 # Building For Production
 
-To build this application for production:
+To build NanoPhoto for production:
 
 ```bash
 pnpm build
@@ -19,7 +32,7 @@ pnpm build
 
 ## Testing
 
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
+NanoPhoto uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
 
 ```bash
 pnpm test
@@ -27,41 +40,38 @@ pnpm test
 
 ## Styling
 
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
+NanoPhoto uses [Tailwind CSS](https://tailwindcss.com/) for styling, providing a modern and responsive design system.
 
+## Authentication
 
-
-## Setting up Clerk
+NanoPhoto uses [Clerk](https://clerk.com/) for secure user authentication and management.
 
 - Set the `VITE_CLERK_PUBLISHABLE_KEY` in your `.env.local`.
 
+## UI Components
 
-## Shadcn
-
-Add components using the latest version of [Shadcn](https://ui.shadcn.com/).
+NanoPhoto uses [Shadcn/ui](https://ui.shadcn.com/) for beautiful, accessible UI components.
 
 ```bash
 pnpx shadcn@latest add button
 ```
 
+## Database
 
-## Setting up Neon
+NanoPhoto uses [Neon](https://neon.tech/) for serverless PostgreSQL database hosting.
 
-When running the `dev` command, the `@neondatabase/vite-plugin-postgres` will identify there is not a database setup. It will then create and seed a claimable database.
-
-It is the same process as [Neon Launchpad](https://neon.new).
+When running the `dev` command, the `@neondatabase/vite-plugin-postgres` will automatically set up a database if one doesn't exist. This uses the same process as [Neon Launchpad](https://neon.new).
 
 > [!IMPORTANT]  
-> Claimable databases expire in 72 hours.
-
-
+> Claimable databases expire in 72 hours. For production use, create a permanent database at [neon.tech](https://neon.tech).
 
 ## Routing
-This project uses [TanStack Router](https://tanstack.com/router). The initial setup is a file based router. Which means that the routes are managed as files in `src/routes`.
+
+NanoPhoto uses [TanStack Router](https://tanstack.com/router) with a file-based routing system. Routes are managed as files in the `src/routes` directory.
 
 ### Adding A Route
 
-To add a new route to your application just add another a new file in the `./src/routes` directory.
+To add a new route to NanoPhoto, create a new file in the `./src/routes` directory.
 
 TanStack will automatically generate the content of the route file for you.
 
@@ -92,8 +102,8 @@ In the File Based Routing setup the layout is located in `src/routes/__root.tsx`
 Here is an example layout that includes a header:
 
 ```tsx
-import { Outlet, createRootRoute } from '@tanstack/react-router'
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
+import { Outlet, createRootRoute } from "@tanstack/react-router";
+import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
 import { Link } from "@tanstack/react-router";
 
@@ -110,13 +120,12 @@ export const Route = createRootRoute({
       <TanStackRouterDevtools />
     </>
   ),
-})
+});
 ```
 
 The `<TanStackRouterDevtools />` component is not required so you can remove it if you don't want it in your layout.
 
 More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
 
 ## Data Fetching
 

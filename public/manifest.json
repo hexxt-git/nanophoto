@@ -1,6 +1,7 @@
 {
-  "short_name": "TanStack App",
-  "name": "Create TanStack App Sample",
+  "short_name": "NanoPhoto",
+  "name": "NanoPhoto - AI Photography Coach",
+  "description": "Improve your photography skills with AI analysis, visual guidance overlays, and smart editing suggestions. Perfect for amateur photographers learning composition, exposure, and photo editing.",
   "icons": [
     {
       "src": "favicon.ico",
@@ -8,14 +9,9 @@
       "type": "image/x-icon"
     },
     {
-      "src": "logo192.png",
+      "src": "logo.png",
       "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "logo512.png",
-      "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "1024x1024"
     }
   ],
   "start_url": ".",
