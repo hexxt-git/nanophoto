@@ -5,17 +5,39 @@
   "icons": [
     {
       "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
+      "sizes": "255x255",
       "type": "image/x-icon"
     },
     {
       "src": "logo.png",
       "type": "image/png",
-      "sizes": "1024x1024"
+      "sizes": "1024x1024",
+      "purpose": "any"
     }
   ],
-  "start_url": ".",
+  "screenshots": [
+    {
+      "src": "screenshot-mobile.png",
+      "sizes": "375x812",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Mobile view of NanoPhoto analysis"
+    },
+    {
+      "src": "screenshot-desktop.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Desktop view of NanoPhoto analysis"
+    }
+  ],
+  "start_url": "/",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "orientation": "portrait-primary",
+  "theme_color": "#3b82f6",
+  "background_color": "#ffffff",
+  "scope": "/",
+  "categories": ["photography", "productivity", "utilities"],
+  "lang": "en",
+  "dir": "ltr"
 }

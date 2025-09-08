@@ -18,6 +18,7 @@ import type { QueryClient } from "@tanstack/react-query";
 import type { TRPCRouter } from "@/integrations/trpc/router";
 import type { TRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import { Toaster } from "@/components/ui/sonner";
+import { PWARegister } from "@/components/pwa-register";
 
 interface MyRouterContext {
   queryClient: QueryClient;
@@ -117,6 +118,14 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         rel: "stylesheet",
         href: appCss,
       },
+      {
+        rel: "manifest",
+        href: "/manifest.json",
+      },
+      {
+        rel: "apple-touch-icon",
+        href: "/logo.png",
+      },
     ],
   }),
 
@@ -131,6 +140,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <ClerkProvider>
+          <PWARegister />
           <Toaster />
           {children}
           {/* <TanstackDevtools
