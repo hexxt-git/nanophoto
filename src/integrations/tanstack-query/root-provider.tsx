@@ -6,7 +6,6 @@ import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
 import type { TRPCRouter } from "@/integrations/trpc/router";
 
 import { TRPCProvider } from "@/integrations/trpc/react";
-import { useAuth } from "@clerk/clerk-react";
 
 function getUrl() {
   const base = (() => {
@@ -23,18 +22,7 @@ function getUrl() {
 export const trpcClient = createTRPCClient<TRPCRouter>({
   links: [
     httpBatchStreamLink({
-      transformer: superjson as any,
       url: getUrl(),
-      headers() {
-        // This runs on client; Clerk provides userId via useAuth
-        try {
-          // dynamic import to avoid SSR mismatch
-          const { userId } = (window as any).clerkAuth || {};
-          return userId ? { "x-user-id": userId } : {};
-        } catch {
-          return {};
-        }
-      },
     }),
   ],
 });
@@ -64,13 +52,6 @@ export function Provider({
   children: React.ReactNode;
   queryClient: QueryClient;
 }) {
-  // Bridge Clerk userId to TRPC headers via a global; avoids hook usage here
-  try {
-    const auth = (useAuth as any)?.();
-    if (auth && typeof window !== "undefined") {
-      (window as any).clerkAuth = { userId: auth.userId };
-    }
-  } catch {}
   return (
     <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
       {children}

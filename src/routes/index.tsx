@@ -9,6 +9,8 @@ import { ControlsBar } from "@/components/app/controls-bar";
 import { ImagePreviewDialog } from "@/components/app/image-preview-dialog";
 import { UserButton } from "@clerk/clerk-react";
 import { SignedIn, SignedOut, SignInButton } from "@clerk/clerk-react";
+import { useQuery } from "@tanstack/react-query";
+import { trpcClient } from "@/integrations/tanstack-query/root-provider";
 // Note: keep original aspect in preview; crop/flip only on capture
 
 export const Route = createFileRoute("/")({

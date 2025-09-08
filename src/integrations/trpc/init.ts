@@ -5,12 +5,11 @@ const t = initTRPC
   .context<{
     userId: string | null;
   }>()
-  .create({
-    transformer: superjson,
-  });
+  .create();
 
 export const createTRPCRouter = t.router;
 export const publicProcedure = t.procedure;
+
 export const protectedProcedure = t.procedure.use((opts) => {
   const { ctx } = opts;
   if (!ctx.userId) {

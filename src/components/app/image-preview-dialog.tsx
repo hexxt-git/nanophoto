@@ -34,14 +34,30 @@ export function ImagePreviewDialog({
   const navigate = useNavigate();
 
   const analyzeMutation = useMutation({
-    mutationFn: (input: {
-      image: string;
+    mutationFn: async (input: {
+      imageUrl: string;
       mode: string;
       constraints: ConstraintKey[];
-    }) =>
-      trpcClient.analyze.create
-        .mutate(input)
-        .then((r) => r.analysisId as string),
+    }) => {
+      // Convert blob URL to data URL
+      const res = await fetch(input.imageUrl);
+      const blob = await res.blob();
+
+      const dataUrl = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+
+      return trpcClient.ai.analyze
+        .mutate({
+          image: dataUrl,
+          mode: input.mode,
+          constraints: input.constraints,
+        })
+        .then((r) => r.analysisId as string);
+    },
     onSuccess: (analysisId) => {
       onOpenChange(false);
       void navigate({ to: `/analysis/${analysisId}` });
@@ -67,7 +83,7 @@ export function ImagePreviewDialog({
 
   const handleAnalyze = () => {
     if (!imageUrl || isSubmitting) return;
-    analyzeMutation.mutate({ image: imageUrl, mode, constraints });
+    analyzeMutation.mutate({ imageUrl, mode, constraints });
   };
 
   return (

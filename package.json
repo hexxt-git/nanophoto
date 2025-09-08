@@ -10,7 +10,9 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@ai-sdk/google": "^2.0.12",
     "@clerk/clerk-react": "^5.22.13",
+    "@clerk/tanstack-react-start": "^0.23.4",
     "@neondatabase/serverless": "^1.0.0",
     "@neondatabase/vite-plugin-postgres": "^0.2.0",
     "@radix-ui/react-accordion": "^1.2.12",
@@ -32,6 +34,7 @@
     "@trpc/client": "^11.4.3",
     "@trpc/server": "^11.4.3",
     "@trpc/tanstack-react-query": "^11.4.3",
+    "ai": "^5.0.34",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.476.0",
