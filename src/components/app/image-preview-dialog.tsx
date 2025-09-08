@@ -114,13 +114,13 @@ export function ImagePreviewDialog({
               alt="Preview"
               className="rounded-lg border border-border max-h-[65svh] w-auto"
               onError={(e) => {
-                console.error('Failed to load image:', imageUrl);
+                console.error("Failed to load image:", imageUrl);
                 toast.error("Failed to load image preview");
                 // Reset the image URL on error
                 onOpenChange(false);
               }}
               onLoad={() => {
-                console.log('Image loaded successfully:', imageUrl);
+                console.log("Image loaded successfully:", imageUrl);
               }}
             />
           ) : (

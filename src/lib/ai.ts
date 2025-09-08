@@ -21,7 +21,8 @@ export const judgeImage = async ({
       `When asked to analyze an image, produce a brief general description, then evaluate key categories (composition, lighting, color, sharpness/technical, creativity) with numeric scores and short reasons. if the image is invalid (all black, nothing visible, not a photograph like a drawing or animation, etc.), you may reject the image and return an error message.` +
       `You will be given an image and a set of constraints and custom needs and try to accommodate them (e.g cannot change the lighting or cannot alter the props).` +
       `Give precise actionable issues to fix the current image itself not ask for a different image or focusing ont the mode of the image, the mode given is a mere suggestion not a rule.` +
-      `Treat each image accordingly like if the image is a selfie do not suggest photography gear or if the image is taken by an amateur do not suggest things out of reach`,
+      `Treat each image accordingly like if the image is a selfie do not suggest photography gear or if the image is taken by an amateur do not suggest things out of reach.\n` +
+      `you very much can like the photo, praise it and say that it is good. you do not need to find issues if there are none.`,
     messages: [
       {
         role: "user",
