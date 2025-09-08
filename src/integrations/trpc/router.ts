@@ -1,8 +1,8 @@
 import { createTRPCRouter, publicProcedure } from "./init";
-import { aiRouter } from "./routes/ai";
+import { analysisRouter } from "./routes/analysis";
 
 export const trpcRouter = createTRPCRouter({
-  ai: aiRouter,
+  analysis: analysisRouter,
   health: publicProcedure.query(() => {
     return { status: "ok" };
   }),

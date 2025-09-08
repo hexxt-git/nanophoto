@@ -58,12 +58,7 @@ pnpx shadcn@latest add button
 
 ## Database
 
-NanoPhoto uses [Neon](https://neon.tech/) for serverless PostgreSQL database hosting.
-
-When running the `dev` command, the `@neondatabase/vite-plugin-postgres` will automatically set up a database if one doesn't exist. This uses the same process as [Neon Launchpad](https://neon.new).
-
-> [!IMPORTANT]  
-> Claimable databases expire in 72 hours. For production use, create a permanent database at [neon.tech](https://neon.tech).
+NanoPhoto uses [MongoDB](https://www.mongodb.com/) for database hosting.
 
 ## Routing
 

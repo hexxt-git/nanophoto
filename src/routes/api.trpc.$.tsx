@@ -2,6 +2,7 @@ import { createServerFileRoute } from "@tanstack/react-start/server";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { getAuth } from "@clerk/tanstack-react-start/server";
 import { trpcRouter } from "@/integrations/trpc/router";
+import { getDatabase } from "@/db";
 
 function handler({ request }: { request: Request }) {
   return fetchRequestHandler({
@@ -27,10 +28,19 @@ function handler({ request }: { request: Request }) {
     createContext: async () => {
       try {
         const auth = await getAuth(request);
-        return { userId: auth.userId ?? null };
+        const db = await getDatabase();
+        return {
+          userId: auth.userId ?? null,
+          db,
+        };
       } catch (error) {
         console.error("error", error);
-        return { userId: null };
+        // Fallback: get database connection even if auth fails
+        const db = await getDatabase();
+        return {
+          userId: null,
+          db,
+        };
       }
     },
   });

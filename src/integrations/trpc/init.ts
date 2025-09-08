@@ -1,9 +1,10 @@
 import { initTRPC } from "@trpc/server";
-import superjson from "superjson";
+import type { Db } from "mongodb";
 
 const t = initTRPC
   .context<{
     userId: string | null;
+    db: Db;
   }>()
   .create();
 

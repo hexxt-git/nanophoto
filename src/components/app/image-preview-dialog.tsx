@@ -50,7 +50,7 @@ export function ImagePreviewDialog({
         reader.readAsDataURL(blob);
       });
 
-      return trpcClient.ai.analyze
+      return trpcClient.analysis.analyze
         .mutate({
           image: dataUrl,
           mode: input.mode,
