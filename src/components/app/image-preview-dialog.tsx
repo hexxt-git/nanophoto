@@ -75,6 +75,13 @@ export function ImagePreviewDialog({
     }
   }, [open, imageUrl]);
 
+  // Reset step when dialog closes
+  React.useEffect(() => {
+    if (!open) {
+      setStep(1);
+    }
+  }, [open]);
+
   const constraintLabels: Record<ConstraintKey, string> = {
     background: "Background",
     props: "Props",
@@ -106,8 +113,21 @@ export function ImagePreviewDialog({
               src={imageUrl}
               alt="Preview"
               className="rounded-lg border border-border max-h-[65svh] w-auto"
+              onError={(e) => {
+                console.error('Failed to load image:', imageUrl);
+                toast.error("Failed to load image preview");
+                // Reset the image URL on error
+                onOpenChange(false);
+              }}
+              onLoad={() => {
+                console.log('Image loaded successfully:', imageUrl);
+              }}
             />
-          ) : null
+          ) : (
+            <div className="rounded-lg border border-border max-h-[65svh] w-full h-32 flex items-center justify-center text-muted-foreground">
+              No image selected
+            </div>
+          )
         ) : (
           <div className="max-h-[65svh] overflow-y-auto">
             <div className="rounded-lg border">

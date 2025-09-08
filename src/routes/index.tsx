@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import {
   CameraViewport,
   type CameraHandle,
@@ -18,6 +18,15 @@ function App() {
   const cameraRef = useRef<CameraHandle | null>(null);
   const [lastCaptureUrl, setLastCaptureUrl] = useState<string | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
+
+  // Cleanup blob URL on component unmount
+  useEffect(() => {
+    return () => {
+      if (lastCaptureUrl) {
+        URL.revokeObjectURL(lastCaptureUrl);
+      }
+    };
+  }, [lastCaptureUrl]);
 
   return (
     <div className="h-[calc(100dvh-2rem)] flex flex-col">
@@ -57,6 +66,10 @@ function App() {
             setLastCaptureUrl(url);
             setPreviewOpen(true);
           }
+          // Reset the input value to allow selecting the same file again
+          if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+          }
         }}
       />
 
@@ -89,7 +102,14 @@ function App() {
       <SignedIn>
         <ImagePreviewDialog
           open={previewOpen}
-          onOpenChange={setPreviewOpen}
+          onOpenChange={(open) => {
+            setPreviewOpen(open);
+            // Clean up blob URL when dialog is closed
+            if (!open && lastCaptureUrl) {
+              URL.revokeObjectURL(lastCaptureUrl);
+              setLastCaptureUrl(null);
+            }
+          }}
           imageUrl={lastCaptureUrl}
         />
       </SignedIn>
