@@ -50,6 +50,7 @@ export const analysisRouter = createTRPCRouter({
         constraints: input.constraints,
         judgement: judgement,
         sketches: sketches,
+        createdAt: new Date().toISOString(),
       });
 
       return { analysisId: analysisId };
@@ -60,11 +61,38 @@ export const analysisRouter = createTRPCRouter({
       const analysis = await ctx.db
         .collection<Analysis>("analyses")
         .findOne({ analysisId: input.analysisId });
-
       if (!analysis) {
         throw new Error("Analysis not found");
       }
 
       return analysis;
     }),
+  list: publicProcedure.query(async ({ ctx }) => {
+    console.log("listing analyses", ctx.userId);
+
+    const analyses = await ctx.db
+      .collection<Analysis>("analyses")
+      .find({ userId: ctx.userId })
+      .project({
+        analysisId: 1,
+        image: 1,
+        createdAt: 1,
+        "judgement.imageTitle": 1,
+        "judgement.verdict": 1,
+      })
+      .toArray();
+
+    return analyses
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      )
+      .map((analysis) => ({
+        analysisId: analysis.analysisId,
+        image: analysis.image,
+        verdict: analysis.judgement.verdict,
+        imageTitle: analysis.judgement.imageTitle,
+        createdAt: analysis.createdAt,
+      }));
+  }),
 });

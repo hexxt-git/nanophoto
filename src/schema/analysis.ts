@@ -11,4 +11,5 @@ export type Analysis = {
   constraints: string[];
   judgement: z.infer<typeof judgementSchema>;
   sketches: string[];
+  createdAt: string;
 };

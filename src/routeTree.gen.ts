@@ -11,12 +11,18 @@
 import { createServerRootRoute } from '@tanstack/react-start/server'
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as HistoryRouteImport } from './routes/history'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AnalysisAnalysisIdRouteImport } from './routes/analysis.$analysisId'
 import { ServerRoute as ApiTrpcSplatServerRouteImport } from './routes/api.trpc.$'
 
 const rootServerRouteImport = createServerRootRoute()
 
+const HistoryRoute = HistoryRouteImport.update({
+  id: '/history',
+  path: '/history',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -35,27 +41,31 @@ const ApiTrpcSplatServerRoute = ApiTrpcSplatServerRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/history': typeof HistoryRoute
   '/analysis/$analysisId': typeof AnalysisAnalysisIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/history': typeof HistoryRoute
   '/analysis/$analysisId': typeof AnalysisAnalysisIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/history': typeof HistoryRoute
   '/analysis/$analysisId': typeof AnalysisAnalysisIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/analysis/$analysisId'
+  fullPaths: '/' | '/history' | '/analysis/$analysisId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/analysis/$analysisId'
-  id: '__root__' | '/' | '/analysis/$analysisId'
+  to: '/' | '/history' | '/analysis/$analysisId'
+  id: '__root__' | '/' | '/history' | '/analysis/$analysisId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  HistoryRoute: typeof HistoryRoute
   AnalysisAnalysisIdRoute: typeof AnalysisAnalysisIdRoute
 }
 export interface FileServerRoutesByFullPath {
@@ -82,6 +92,13 @@ export interface RootServerRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/history': {
+      id: '/history'
+      path: '/history'
+      fullPath: '/history'
+      preLoaderRoute: typeof HistoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -112,6 +129,7 @@ declare module '@tanstack/react-start/server' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  HistoryRoute: HistoryRoute,
   AnalysisAnalysisIdRoute: AnalysisAnalysisIdRoute,
 }
 export const routeTree = rootRouteImport
